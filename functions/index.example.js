@@ -28,11 +28,13 @@ const puppeteer = require('puppeteer');
     }
 
 
-    await page.click(`a[title='Discussion']`)
+    await page.goto('https://www.facebook.com/groups/WELEVN',{waitUntil:'domcontentloaded'})
+    // await page.click(`a[title='Discussion']`)
+    await page.click(`a[title=Discussion]"`)
 
-    await page.waitForNavigation({
-        waitUntil:'domcontentloaded'
-    });
+    // await page.waitForNavigation({
+    //     waitUntil:'domcontentloaded'
+    // });
 
     const post = await page.evaluate(() => {
         let have = false
