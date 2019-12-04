@@ -48,7 +48,8 @@ class Bot {
 
 
     async startCrawl (){
-        const browser = await puppeteer.launch({args: ['--no-sandbox']});
+        // const browser = await puppeteer.launch({args: ['--no-sandbox']});
+        const browser = await puppeteer.launch({headless: false});
         this.page = await browser.newPage();
 
         await this.goToWELEGroup()
