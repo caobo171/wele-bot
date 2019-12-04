@@ -6,35 +6,52 @@ let posts = []
 postElements.forEach(postElement => {
 
     try {
-        const authorName = postElement.querySelector('[data-testid="story-subtitle"]').previousSibling
+        const authorName = postElement.querySelector('[data-testid="story-subtitle"]').previousSibling.getElementsByTagName('a')[0].innerText
 
-//         const date = new Date(postElement.querySelector("[data-testid='story-subtitle']").children[2].querySelector("[title]").title)
+        const authorImage = postElement.querySelector(`img[aria-label="${authorName}"]`).src
+        const date = new Date(postElement.querySelector("[data-testid='story-subtitle']").querySelector("[title]").title)
 
-//         let postMessage = ''
-//         const postChildren = postElement.getElementsByClassName('text_exposed_root')[0].children
+        const messageElement = postElement.querySelector("[data-testid='post_message']")
 
-//         for (let i = 0; i < postChildren.length - 2; i++) {
-//             postMessage += postChildren[i].innerText + '\n';
-//         }
+        const showText = messageElement.innerText.replace('See More','').replace('See Translation','').replace(/\.\.\.\s\n\n/g,'').replace(/\n/g,'<br>')
+        const hideText = [...messageElement.getElementsByClassName('text_exposed_show')].map(e=>e.innerText.replace(/\n/g,'<br>')).join('<br>')
 
-//         const a = postChildren[postChildren.length - 2].innerText
-//         const b = /(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/g
+        const postMessage = showText+hideText;
 
-//         const downloadLinks = [...a.matchAll(b)].map(e => e[0])
+         const b = /(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/g
+
+          const downloadLinks = [...postMessage.matchAll(b)].map(e => e[0])
+
+         const nextMessageElement = messageElement.nextElementSibling
+
+          let image = null 
+         if(nextMessageElement){
+             imageElement = nextMessageElement.getElementsByTagName('img')[0]
+             if(imageElement){
+                 image = {
+                     src: imageElement.src,
+                     height: imageElement.height,
+                     width: imageElement.width
+                 }
+             }
+         }
 
 //         const image = postElement.querySelector("a[rel='theater']").getElementsByTagName('img')[0].src
 
 //         console.log('check a', image)
         posts.push({
-            authorName,
-//             date,
-//             postMessage,
-//             downloadLinks,
-//             image
+            author: {name: authorName, image:authorImage },
+            date,
+            postMessage,
+            downloadLinks,
+            image
         })
     } catch (e) {
+        console.log(postElement)
         console.log(e)
     }
 })
 
-console.log(posts)
+const eslPosts = posts.filter(e=> e.downloadLinks.length >= 2 && e.downloadLinks.some(link => link.indexOf('www.mediafire.com')>=0 ))
+
+const latestESLPost = eslPosts.sort((a,b)=> b.date.getTime() -a.date.getTime())[0]
