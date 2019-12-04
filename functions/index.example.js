@@ -2,83 +2,36 @@
 
 
 const puppeteer = require('puppeteer');
-
-
-
-
-
+const { getLatestEsl } = require('./getLatestEsl');
 
 (async () => {
     const browser = await puppeteer.launch({ headless: false });
     const page = await browser.newPage();
     await page.goto('https://www.facebook.com/groups/WELEVN/', { waitUntil: 'domcontentloaded' });
 
-    await page.type('#email', 'username@gmail.com');
+    await page.type('#email', 'namel.com');
     // Nhập password vào ô đăng nhập
-    await page.type('#pass', 'password#');
+    await page.type('#pass', 'pass#');
 
     await page.click('#loginbutton')
 
-    try{
+    try {
         await page.waitForNavigation({
-            waitUntil:'domcontentloaded'
+            waitUntil: 'domcontentloaded'
         });
-    }catch(e){
+    } catch (e) {
 
     }
 
-
-    await page.goto('https://www.facebook.com/groups/WELEVN',{waitUntil:'domcontentloaded'})
     // await page.click(`a[title='Discussion']`)
-    await page.click(`a[title=Discussion]"`)
+    await page.click(`a[title=Discussion]`);
+    await page.waitFor(3000)
+    await page.click(`a[title=Discussion]`);
+    await page.waitFor(10000)
 
-    // await page.waitForNavigation({
-    //     waitUntil:'domcontentloaded'
-    // });
+    const post = await getLatestEsl(page)
 
-    const post = await page.evaluate(() => {
-        let have = false
-        const postElements = [...document.getElementsByClassName('userContentWrapper')]
-
-        console.log('check postElements', postElements)
-        return document.body.innerText
-        // postElements.forEach(postElement => {
-
-        //     try {
-        //         const authorName = postElement.getElementsByClassName('profileLink')[0].innerText
-
-        //         const date = new Date(document.getElementsByClassName('userContentWrapper')[0].querySelector("[data-testid='story-subtitle']").children[2].querySelector("[title]").title)
-
-        //         let postMessage = ''
-        //         const postChildren = document.getElementsByClassName('text_exposed_root')[0].children
-
-        //         for (let i = 0; i < postChildren.length - 2; i++) {
-        //             postMessage += postChildren[i].innerText + '\n';
-        //         }
-
-        //         const a = postChildren[postChildren.length - 2].innerText
-        //         const b = /(http|ftp|https):\/\/([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/g
-
-        //         const downloadLinks = [...a.matchAll(b)].map(e => e[0])
-
-        //         const image = postElement.querySelector("a[rel='theater']").getElementsByTagName('img')[0].src
-
-        //         console.log('check a', image)
-        //         return {
-        //             authorName,
-        //             date,
-        //             postMessage,
-        //             downloadLinks,
-        //             image
-        //         }
-        //     } catch (e) {
-        //         console.log(e)
-        //     }
-        })
-
-    await console.log('check post ', post)
-
-
+    console.log('check post', post)
     //   await browser.close();
 })();
 // // Create and Deploy Your First Cloud Functions
